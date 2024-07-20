@@ -1,10 +1,20 @@
 import redis
 import hashlib
-
+from abc import ABC, abstractmethod
 from scraper.constants import RedisKeys
 
 
-class Cache:
+class Cache(ABC):
+    @abstractmethod
+    def is_cached(self, product):
+        NotImplementedError()
+
+    @abstractmethod
+    def cache_product(self, product):
+        NotImplementedError()
+
+
+class RedisCache(Cache):
     def __init__(self):
         self.client = redis.Redis(host='localhost', port=6379, db=0)
 

@@ -1,22 +1,20 @@
 import os
-
 import requests
 from bs4 import BeautifulSoup
 from scraper.models import Settings
-from scraper.database import Database, JSONDatabase
+from scraper.database import Database
 from scraper.cache import Cache
 
 
 class Scraper:
-    def __init__(self, settings: Settings):
-        self.settings = settings
-        self.db: Database = JSONDatabase()
-        self.cache = Cache()
+    def __init__(self, database: Database, cache: Cache):
+        self.db = database
+        self.cache = cache
         self.base_url = "https://dentalstall.com/shop/"
 
-    def fetch_page(self, page_number):
+    def fetch_page(self, page_number, proxy):
         try:
-            response = requests.get(f"{self.base_url}?page={page_number}", proxies=self.settings.proxy)
+            response = requests.get(f"{self.base_url}?page={page_number}", proxies=proxy)
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
@@ -38,10 +36,10 @@ class Scraper:
         with open(path, "wb") as file:
             file.write(response.content)
 
-    def run(self):
+    def run(self, settings: Settings):
         scraped_count = 0
-        for page in range(1, self.settings.page_limit + 1):
-            html = self.fetch_page(page)
+        for page in range(1, settings.page_limit + 1):
+            html = self.fetch_page(page, settings.proxy)
             if not html:
                 continue
             products = self.parse_page(html)
