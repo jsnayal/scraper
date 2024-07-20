@@ -4,12 +4,14 @@ from bs4 import BeautifulSoup
 from scraper.models import Settings
 from scraper.database import Database
 from scraper.cache import Cache
+from scraper.notification import Notification
 
 
 class Scraper:
-    def __init__(self, database: Database, cache: Cache):
+    def __init__(self, database: Database, cache: Cache, notification: Notification):
         self.db = database
         self.cache = cache
+        self.notification = notification
         self.base_url = "https://dentalstall.com/shop/"
 
     def fetch_page(self, page_number, proxy):
@@ -28,7 +30,7 @@ class Scraper:
             title = product.select_one('.woo-loop-product__title a').text.strip()
             price = product.select_one('.woocommerce-Price-amount').text.strip()
             image_url = product.select_one('.mf-product-thumbnail img')['src']
-            products.append({"title": title, "price": float(price[1:]), "image_url": image_url})
+            products.append({"product_title": title, "product_price": float(price[1:]), "image_url": image_url})
         return products
 
     def download_image(self, url, path):
@@ -48,11 +50,12 @@ class Scraper:
                     directory_path = 'images'
                     if not os.path.exists(directory_path):
                         os.mkdir(directory_path)
-                    image_path = f"{directory_path}/{product['title'].replace(' ', '_')}.jpg"
+                    image_path = f"{directory_path}/{product['product_title'].replace(' ', '_')}.jpg"
                     self.download_image(product["image_url"], image_path)
-                    product["image_path"] = image_path
+                    product["path_to_image"] = image_path
                     self.db.save_product(product)
                     self.cache.cache_product(product)
                     scraped_count += 1
-        print(f"Scraped {scraped_count} products")
-        return {"count": scraped_count}
+        message = {"message": f"Scraped {scraped_count} products"}
+        self.notification.notify(message)
+        return message

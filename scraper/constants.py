@@ -13,3 +13,7 @@ class DatabaseType(Enum):
     JSON = "json"
     MYSQL = "mysql"
 
+
+class NotificationType(Enum):
+    CONSOLE = "console"
+    MESSAGE = "message"

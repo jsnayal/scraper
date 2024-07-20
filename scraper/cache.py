@@ -19,9 +19,10 @@ class RedisCache(Cache):
         self.client = redis.Redis(host='localhost', port=6379, db=0)
 
     def is_cached(self, product):
-        key = hashlib.md5(product["title"].encode()).hexdigest()
-        return True if float(self.client.hget(RedisKeys.PRODUCT_CACHE.value, key)) == product['price'] else False
+        key = hashlib.md5(product["product_title"].encode()).hexdigest()
+        product_price = self.client.hget(RedisKeys.PRODUCT_CACHE.value, key)
+        return True if product_price and float(product_price) == product['product_price'] else False
 
     def cache_product(self, product):
-        key = hashlib.md5(product["title"].encode()).hexdigest()
-        self.client.hset(RedisKeys.PRODUCT_CACHE.value, key, product["price"])
+        key = hashlib.md5(product["product_title"].encode()).hexdigest()
+        self.client.hset(RedisKeys.PRODUCT_CACHE.value, key, product["product_price"])
