@@ -18,7 +18,7 @@ class JSONDatabase(Database):
         self.output_dir = os.path.join(os.getcwd(), 'output')
         self.file_path = os.path.join(self.output_dir, "products.json")
 
-    def save_product(self, product):
+    def save_product(self, product) -> None:
         try:
             if not os.path.exists(self.output_dir):
                 os.mkdir(self.output_dir)

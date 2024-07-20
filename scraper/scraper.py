@@ -14,16 +14,16 @@ class Scraper:
         self.notification = notification
         self.base_url = "https://dentalstall.com/shop/"
 
-    def fetch_page(self, page_number, proxy):
+    def fetch_page(self, page_number, proxy) -> str:
         try:
             response = requests.get(f"{self.base_url}?page={page_number}", proxies=proxy)
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
             print(f"Error fetching page {page_number}: {e}")
-            return None
+            return ''
 
-    def parse_page(self, html):
+    def parse_page(self, html) -> list:
         soup = BeautifulSoup(html, "html.parser")
         products = []
         for product in soup.select(".product-inner"):
@@ -33,12 +33,12 @@ class Scraper:
             products.append({"product_title": title, "product_price": float(price[1:]), "image_url": image_url})
         return products
 
-    def download_image(self, url, path):
+    def download_image(self, url, path) -> None:
         response = requests.get(url)
         with open(path, "wb") as file:
             file.write(response.content)
 
-    async def run(self, settings: Settings):
+    async def run(self, settings: Settings) -> dict:
         scraped_count = 0
         for page in range(1, settings.page_limit + 1):
             html = self.fetch_page(page, settings.proxy)
