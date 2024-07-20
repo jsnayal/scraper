@@ -59,3 +59,16 @@ class Scraper:
         message = {"message": f"Scraped {scraped_count} products"}
         self.notification.notify(message)
         return message
+
+
+class WebScraper:
+    scraper: Scraper = None
+
+    @classmethod
+    def get_scraper(cls):
+        return cls.scraper
+
+    @classmethod
+    def set_scraper(cls, scraper):
+        if cls.scraper is None:
+            cls.scraper = scraper
