@@ -38,7 +38,7 @@ class Scraper:
         with open(path, "wb") as file:
             file.write(response.content)
 
-    def run(self, settings: Settings):
+    async def run(self, settings: Settings):
         scraped_count = 0
         for page in range(1, settings.page_limit + 1):
             html = self.fetch_page(page, settings.proxy)

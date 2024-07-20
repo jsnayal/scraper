@@ -3,12 +3,13 @@ from fastapi import FastAPI
 from scraper.cache import RedisCache
 from scraper.constants import DatabaseType, CacheType, NotificationType
 from scraper.database import JSONDatabase
+from scraper.middleware import TokenAuthMiddleware
 from scraper.notification import ConsoleNotification
 from scraper.scraper import Scraper
 from scraper.models import Settings
 
 app = FastAPI()
-
+app.add_middleware(TokenAuthMiddleware)
 scraper: Scraper
 
 
@@ -33,7 +34,7 @@ def initialize_scraper(database: DatabaseType, cache: CacheType, notification: N
 
 @app.post("/scrape")
 async def scrape(settings: Settings):
-    result = scraper.run(settings)
+    result = await scraper.run(settings)
     return result
 
 if __name__ == "__main__":
