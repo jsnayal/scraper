@@ -15,18 +15,19 @@ class Database(ABC):
 
 class JSONDatabase(Database):
     def __init__(self):
-        self.file_path = "products.json"
+        self.output_dir = os.path.join(os.getcwd(), 'output')
+        self.file_path = os.path.join(self.output_dir, "products.json")
 
     def save_product(self, product):
         try:
-            if not os.path.exists(self.file_path):
-                os.mknod(self.file_path)
+            if not os.path.exists(self.output_dir):
+                os.mkdir(self.output_dir)
             with open(self.file_path, "r") as file:
                 data = json.load(file)
-        except FileNotFoundError:
+        except Exception:
             data = []
         data.append(product)
-        with open(self.file_path, "w") as file:
+        with open(self.file_path, "w+") as file:
             json.dump(data, file, indent=4)
 
     def get_all_products(self):

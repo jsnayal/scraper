@@ -28,7 +28,7 @@ class Scraper:
             title = product.select_one('.woo-loop-product__title a').text.strip()
             price = product.select_one('.woocommerce-Price-amount').text.strip()
             image_url = product.select_one('.mf-product-thumbnail img')['src']
-            products.append({"title": title, "price": price, "image_url": image_url})
+            products.append({"title": title, "price": float(price[1:]), "image_url": image_url})
         return products
 
     def download_image(self, url, path):
