@@ -16,8 +16,10 @@ class ConsoleNotification(Notification):
 
 
 class Subscriber:
-    def __init__(self, name):
+    def __init__(self, name, email, phone):
         self.name = name
+        self.email = email
+        self.phone = phone
 
     def notify(self, data, notification: Notification):
         notification.notify(data)
@@ -39,7 +41,7 @@ class Publisher:
             subscriber.notify(data, self.notification)
 
 
-class PublisherInstance:
+class MessagePublisher:
     publisher: Publisher = None
 
     @classmethod

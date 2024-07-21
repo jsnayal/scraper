@@ -4,14 +4,13 @@ from bs4 import BeautifulSoup
 from scraper.models import Settings
 from scraper.database import Database
 from scraper.cache import Cache
-from scraper.notification import Notification
+from scraper.notification import MessagePublisher
 
 
 class Scraper:
-    def __init__(self, database: Database, cache: Cache, notification: Notification):
+    def __init__(self, database: Database, cache: Cache):
         self.db = database
         self.cache = cache
-        self.notification = notification
         self.base_url = "https://dentalstall.com/shop/"
 
     def fetch_page(self, page_number, proxy) -> str:
@@ -57,7 +56,7 @@ class Scraper:
                     self.cache.cache_product(product)
                     scraped_count += 1
         message = {"message": f"Scraped {scraped_count} products"}
-        self.notification.notify(message)
+        MessagePublisher.publisher.publish(message)
         return message
 
 
