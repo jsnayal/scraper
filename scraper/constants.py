@@ -20,3 +20,6 @@ class NotificationType(Enum):
 
 
 STATIC_AUTH_TOKEN = "1dcd0f4088ab3aceb790bc4077f2581f"
+RETRY_SECONDS = 5
+RETRY_COUNT = 3
+
