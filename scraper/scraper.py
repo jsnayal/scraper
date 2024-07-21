@@ -64,7 +64,7 @@ class WebScraper:
     scraper: Scraper = None
 
     @classmethod
-    def get_scraper(cls):
+    async def get_scraper(cls):
         return cls.scraper
 
     @classmethod
