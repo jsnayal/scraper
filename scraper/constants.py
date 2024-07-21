@@ -38,4 +38,5 @@ RETRY_SECONDS = 5
 # Number of retry attempts for a failed operation
 RETRY_COUNT = 3
 
-
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379

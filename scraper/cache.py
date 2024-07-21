@@ -1,7 +1,7 @@
 import redis
 import hashlib
 from abc import ABC, abstractmethod
-from scraper.constants import RedisKeys
+from scraper.constants import RedisKeys, REDIS_HOST, REDIS_PORT
 
 
 class Cache(ABC):
@@ -35,7 +35,7 @@ class RedisCache(Cache):
     This class uses Redis to cache product data and check if a product is cached.
     """
     def __init__(self):
-        self.client = redis.Redis(host='localhost', port=6379, db=0)
+        self.client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
     def is_cached(self, product) -> bool:
         """
