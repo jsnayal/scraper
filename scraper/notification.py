@@ -22,7 +22,8 @@ class Subscriber:
         self.phone = phone
 
     def notify(self, data, notification: Notification):
-        notification.notify(data)
+        message = f"{self.name} is notified\n{data}"
+        notification.notify(message)
 
 
 class Publisher:
