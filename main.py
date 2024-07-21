@@ -4,7 +4,7 @@ from scraper.cache import RedisCache
 from scraper.constants import DatabaseType, CacheType, NotificationType
 from scraper.database import JSONDatabase
 from scraper.middleware import TokenAuthMiddleware
-from scraper.notification import ConsoleNotification
+from scraper.notification import ConsoleNotification, MessagePublisher, Publisher
 from scraper.routes import router
 from scraper.scraper import Scraper, WebScraper
 
@@ -28,8 +28,9 @@ def initialize_scraper(database: DatabaseType, cache: CacheType, notification: N
         NotificationType.CONSOLE: ConsoleNotification(),
         # add other databases
     }.get(notification)
-
-    return Scraper(database=db_instance, cache=cache_instance, notification=notifier_instance)
+    publisher = Publisher(notification=notifier_instance)
+    MessagePublisher.set_publisher(publisher)
+    return Scraper(database=db_instance, cache=cache_instance)
 
 
 if __name__ == "__main__":
