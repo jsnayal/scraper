@@ -12,6 +12,10 @@ from tenacity import retry, wait_fixed, stop_after_attempt, retry_if_exception_t
 
 
 class Scraper:
+    """
+    A class to scrape product data from a specific website and handle the scraping process,
+    including fetching pages, parsing HTML, and downloading images
+    """
     def __init__(self, database: Database, cache: Cache):
         self.db = database
         self.cache = cache
@@ -19,6 +23,11 @@ class Scraper:
 
     @retry(wait=wait_fixed(RETRY_SECONDS), stop=stop_after_attempt(RETRY_COUNT), retry=retry_if_exception_type(requests.RequestException))
     def fetch_page(self, page_number: int, proxy: Dict[str, str]) -> str:
+        """
+        :param page_number: page to be fetched
+        :param proxy: proxy string
+        :return: html content of the page
+        """
         try:
             response = requests.get(f"{self.base_url}/page/{page_number}", proxies=proxy)
             response.raise_for_status()
@@ -28,6 +37,10 @@ class Scraper:
             raise
 
     def parse_page(self, html: str) -> list:
+        """
+        :param html: html content to be parsed for products
+        :return: list of scraped products
+        """
         soup = BeautifulSoup(html, "html.parser")
         products = []
         for product in soup.select(".product-inner"):
@@ -38,11 +51,21 @@ class Scraper:
         return products
 
     def download_image(self, url: str, path: str) -> None:
+        """
+        Downloads the image using url
+        :param url: url of the image to download
+        :param path: image path to write to in local disk
+        :return: None
+        """
         response = requests.get(url)
         with open(path, "wb") as file:
             file.write(response.content)
 
     async def run(self, settings: Settings) -> dict:
+        """
+        :param settings: settings to be used for scraping the pages
+        :return: message status about scraping process
+        """
         total_scraped_count = 0
         for page in range(1, settings.page_limit + 1):
             is_scraped, scraped_count = await self.scrape_page(page, settings)
@@ -56,6 +79,11 @@ class Scraper:
         return message
 
     async def scrape_page(self, page: int, settings: Settings) -> Tuple[bool, int]:
+        """
+        :param page: page number to be scraped
+        :param settings: settings to be used for scraping the pages
+        :return: scraped_status and scraped_count
+        """
         scraped_count = 0
         try:
             html = self.fetch_page(page, settings.proxy)
@@ -81,13 +109,23 @@ class Scraper:
 
 
 class WebScraper:
+    """
+        A class to manage a single instance of the Scraper for web scraping tasks
+    """
     scraper: Scraper = None
 
     @classmethod
     async def get_scraper(cls):
+        """
+        :return: Scraper instance
+        """
         return cls.scraper
 
     @classmethod
     def set_scraper(cls, scraper):
+        """
+        :param scraper: instance of scraper
+        :return: None
+        """
         if cls.scraper is None:
             cls.scraper = scraper
