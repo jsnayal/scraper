@@ -11,11 +11,11 @@ class Scraper:
     def __init__(self, database: Database, cache: Cache):
         self.db = database
         self.cache = cache
-        self.base_url = "https://dentalstall.com/shop/"
+        self.base_url = "https://dentalstall.com/shop"
 
     def fetch_page(self, page_number, proxy) -> str:
         try:
-            response = requests.get(f"{self.base_url}?page={page_number}", proxies=proxy)
+            response = requests.get(f"{self.base_url}/page/{page_number}", proxies=proxy)
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
@@ -28,7 +28,7 @@ class Scraper:
         for product in soup.select(".product-inner"):
             title = product.select_one('.woo-loop-product__title a').text.strip()
             price = product.select_one('.woocommerce-Price-amount').text.strip()
-            image_url = product.select_one('.mf-product-thumbnail img')['src']
+            image_url = product.select_one('.mf-product-thumbnail img')['data-lazy-src']
             products.append({"product_title": title, "product_price": float(price[1:]), "image_url": image_url})
         return products
 
