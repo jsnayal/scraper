@@ -68,12 +68,8 @@ class Scraper:
         """
         total_scraped_count = 0
         for page in range(1, settings.page_limit + 1):
-            is_scraped, scraped_count = await self.scrape_page(page, settings)
-            if not is_scraped:
-                # Retry logic is handled within fetch_page
-                pass
-            else:
-                total_scraped_count += scraped_count
+            scraped_count = await self.scrape_page(page, settings)
+            total_scraped_count += scraped_count
         message = {"message": f"Scraped {total_scraped_count} products"}
         MessagePublisher.publisher.publish(message)
         return message
