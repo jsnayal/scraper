@@ -41,3 +41,10 @@ Description: Registers a new recipient for notifications.
 Request Body: JSON object with recipient details (name, email, phone).
 
 Response: A message confirming subscription
+
+## Future scope
+
+1. Implement a different database strategy like mysql, mongodb in database.py
+2. More exception handling and logging capabilities
+3. We can log some performance metrics like API response time, No of requests etc to improve the performance and robustness of the system
+4. Adding Unit Tests for the classes and functions to improve robustness of the system
